@@ -1,11 +1,11 @@
 // Session Request Object
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct NewSessionRequest {
     #[serde(rename = "desiredCapabilities")]
     desired_capabilities: DesiredCapabilitiesRequest,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 struct DesiredCapabilitiesRequest {
     #[serde(rename = "browserName")]
     browser_name: String,
@@ -22,19 +22,6 @@ impl NewSessionRequest {
 impl DesiredCapabilitiesRequest {
     pub fn create(browser_name: String) -> DesiredCapabilitiesRequest {
         DesiredCapabilitiesRequest { browser_name }
-    }
-}
-
-// Session Response object
-#[derive(Serialize, Deserialize)]
-pub struct NewSessionResponse {
-    #[serde(rename = "sessionId")]
-    session_id: String,
-}
-
-impl NewSessionResponse {
-    pub fn get_session_id(self) -> String {
-        self.session_id
     }
 }
 

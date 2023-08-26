@@ -19,9 +19,12 @@
 use element::Element;
 use element_structs::{ElementResponse, ElementsResponse, ExecuteScriptResponse};
 use reqwest;
-use session_structs::{NewSessionRequest, NewSessionResponse, TitleResponse};
+use session_structs::{NewSessionRequest, TitleResponse};
 use std::collections::HashMap;
+use std::io::Read;
 use utils::*;
+use serde;
+use serde_json::Value;
 
 pub enum Browser {
     Chrome,
@@ -92,15 +95,13 @@ impl WebDriver {
     pub fn start_session(&mut self) -> reqwest::Result<()> {
         let body = NewSessionRequest::new(&self.browser);
         let url = construct_url(vec!["session/"]);
-
-        let response: NewSessionResponse = self.client
+        let my_json: Value = self.client
             .post(url)
             .json(&body)
             .send()?
             .error_for_status()?
             .json()?;
-
-        self.session_id = Some(response.get_session_id());
+        self.session_id = my_json["value"]["sessionId"].as_str().map(String::from);
         Ok(())
     }
     /// Returns the current url of the browsing context. See examples for
@@ -164,12 +165,6 @@ impl WebDriver {
 
 // Contains Element Handling
 impl WebDriver {
-    /// Requests an elements from the webpage, given the specified selector and query string
-    #[deprecated(since = "0.1.2", note = "query_element does not follow WebDriver naming convention, use find_element")]
-    pub fn query_element(&self, selector: Selector, query: &str) -> reqwest::Result<Element> {
-        self.find_element(selector, query)
-    }
-
     /// Requests an elements from the webpage, given the specified selector and query string
     pub fn find_element(&self, selector: Selector, query: &str) -> reqwest::Result<Element> {
         let sess_id = self.session_id.clone().unwrap();

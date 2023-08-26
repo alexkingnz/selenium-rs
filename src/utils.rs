@@ -14,7 +14,7 @@ pub fn get_browser_string(browser: Browser) -> String {
 
 pub fn get_default_url() -> Url {
     // Safe unwrap here, since its a hardcoded, valid url
-    Url::parse("http://localhost:4444/wd/hub/").unwrap()
+    Url::parse("http://localhost:4444/").unwrap()
 }
 
 pub fn construct_url(elements: Vec<&str>) -> Url {
